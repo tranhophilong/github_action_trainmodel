@@ -21,5 +21,5 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run jupyter
         run: |
-          jupyter nbconvert --to script deep-learning-for-time-series-forecasting.ipynb
+          jupyter nbconvert --to script example.ipynb
 
