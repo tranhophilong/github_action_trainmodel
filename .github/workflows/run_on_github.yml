@@ -16,12 +16,13 @@ jobs:
           cache: 'pip'
       - name: Install Dependencies
         run: pip install -r requirements.txt
-      - name: Run Script and Update Plot
-        run: |
-          jupyter nbconvert --to script example.ipynb
-      - name: Commit and Push Changes
-        run: |
-          git config --local user.email "tranhophilong12a4@gmail.com"
-          git config --local user.name "Long"
-          git commit -m "output"
-          git push origin master
+      - uses: yaananth/run-notebook@v2
+        env:
+          RUNNER: ${{ toJson(runner) }}
+          SECRETS: ${{ toJson(secrets) }}
+          GITHUB: ${{ toJson(github) }}
+        with:
+          notebook: "example.ipynb"
+          # params: "PATHTOPARAMS.json"
+          isReport: False
+          poll: True
