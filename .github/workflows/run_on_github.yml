@@ -3,28 +3,28 @@ name: Execute notebook
 on: [push]
 
 jobs:
-  run:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v3
-    - uses: yaananth/run-notebook@v2
-    - run : pip install -r requirements.txt
-      env:
-        RUNNER: ${{ toJson(runner) }}
-        SECRETS: ${{ toJson(secrets) }}
-        GITHUB: ${{ toJson(github) }}
-      with:
-        notebook: "deep-learning-for-time-series-forecasting.ipynb"
-        params: "PATHTOPARAMS.json"
-        isReport: False
-        poll: True
-    - uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: output
-        path: ${{ RUNNER.temp }}/nb-runner
-      env:
-        RUNNER: ${{ toJson(runner) }}
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - id: repo 
+        name: Repo Checkout
+        uses: actions/checkout@v2
+
+      - id: python
+        name: Python Setup & Packages Installation
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+
+      - id: jupyter 
+        name: Jupyter Notebook Execution
+        run: jupyter execute deep-learning-for-time-series-forecasting.ipynb
+        shell: bash 
 
