@@ -3,26 +3,28 @@ name: Execute notebook
 on: [push]
 
 jobs:
-  update_plot:
-    name: Update plot with new extreme weather data
+  run:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.7'
-          cache: 'pip'
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
-      - uses: yaananth/run-notebook@v2
-        env:
-          RUNNER: ${{ toJson(runner) }}
-          SECRETS: ${{ toJson(secrets) }}
-          GITHUB: ${{ toJson(github) }}
-        with:
-          notebook: "example.ipynb"
-          # params: "PATHTOPARAMS.json"
-          isReport: False
-          poll: True
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+    - name: install requirement
+      run: pip install -r requirement.txt
+    - uses: yaananth/run-notebook@v2
+      env:
+        RUNNER: ${{ toJson(runner) }}
+        SECRETS: ${{ toJson(secrets) }}
+        GITHUB: ${{ toJson(github) }}
+      with:
+        notebook: "example.ipynb"
+        params: "PATHTOPARAMS.json"
+        isReport: False
+        poll: True
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: output
+        path: ${{ RUNNER.temp }}/nb-runner
+      env:
+        RUNNER: ${{ toJson(runner) }}
